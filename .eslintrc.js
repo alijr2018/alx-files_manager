@@ -28,6 +28,7 @@ module.exports = {
         'LabeledStatement',
         'WithStatement',
       ],
+      'import/no-unresolved': [2, { ignore: ['dotenv'] }],
     },
     overrides:[
       {
