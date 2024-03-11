@@ -1,20 +1,33 @@
 // eslint-disable-next-line no-unused-vars
-import redisClient from '../utils/redis';
+// controllers/AppController.js
 import dbClient from '../utils/db';
 
 class AppController {
-  static async getStatus(req, res) {
-    const redisStatus = await redisClient.isAlive();
-    const dbStatus = await dbClient.isAlive();
 
-    return res.status(200).json({ redis: redisStatus, db: dbStatus });
+  static getStatus(req, res) {
+    const status = {
+      redis: dbClient.isAlive(),
+      db: dbClient.isAlive(),
+    };
+
+    res.status(200).json(status);
   }
 
   static async getStats(req, res) {
-    const usersCount = await dbClient.nbUsers();
-    const filesCount = await dbClient.nbFiles();
+    try {
+      const numUsers = await dbClient.nbUsers();
+      const numFiles = await dbClient.nbFiles();
 
-    return res.status(200).json({ users: usersCount, files: filesCount });
+      const stats = {
+        users: numUsers,
+        files: numFiles,
+      };
+
+      res.status(200).json(stats);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
   }
 }
 
