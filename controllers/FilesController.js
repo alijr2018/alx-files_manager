@@ -11,11 +11,13 @@ import fileQueue from '../utils/queues';
 class FilesController {
   static async postUpload(req, res) {
     const { 'x-token': token } = req.headers;
-    const { name, type, parentId, isPublic, data } = req.body;
+    const {
+      name, type, parentId, isPublic, data,
+    } = req.body;
 
     await fileQueue.add({
-        userId: userId.toString(),
-        fileId: file._id.toString(),
+      userId: userId.toString(),
+      fileId: file._id.toString(),
     });
 
     if (!token) {
@@ -85,6 +87,7 @@ class FilesController {
       parentId: parentIdValue,
     });
   }
+
   static async getShow(req, res) {
     const { 'x-token': token } = req.headers;
     const { id } = req.params;
@@ -143,6 +146,7 @@ class FilesController {
 
     return res.json(files);
   }
+
   static async putPublish(req, res) {
     const { 'x-token': token } = req.headers;
     const { id } = req.params;
@@ -198,6 +202,7 @@ class FilesController {
 
     return res.json(file.value);
   }
+
   static async getFile(req, res) {
     const { 'x-token': token } = req.headers;
     const { id } = req.params;

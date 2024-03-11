@@ -41,6 +41,7 @@ class UsersController {
 
     return res.status(201).json({ id: insertedId, email });
   }
+
   static async getMe(req, res) {
     const { 'x-token': token } = req.headers;
 
