@@ -1,7 +1,6 @@
 // server.js
 
 import express from 'express';
-import dbClient from './utils/db';
 import routes from './routes';
 
 const app = express();
