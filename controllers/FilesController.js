@@ -6,11 +6,17 @@ import path from 'path';
 import base64 from 'base-64';
 import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
+import fileQueue from '../utils/queues';
 
 class FilesController {
   static async postUpload(req, res) {
     const { 'x-token': token } = req.headers;
     const { name, type, parentId, isPublic, data } = req.body;
+
+    await fileQueue.add({
+        userId: userId.toString(),
+        fileId: file._id.toString(),
+    });
 
     if (!token) {
       return res.status(401).json({ error: 'Unauthorized' });
@@ -227,10 +233,16 @@ class FilesController {
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ error: 'Not found' });
     }
+    const { size } = req.query;
+    const fileName = size ? `${file.localPath}_${size}` : file.localPath;
 
-    const mimeType = mime.lookup(filePath);
+    if (!fs.existsSync(fileName)) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+
+    const mimeType = mime.lookup(fileName);
     res.setHeader('Content-Type', mimeType);
-    fs.createReadStream(filePath).pipe(res);
+    fs.createReadStream(fileName).pipe(res);
   }
 }
 
