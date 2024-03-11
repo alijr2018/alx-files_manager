@@ -1,5 +1,4 @@
-// AppController.js
-
+// eslint-disable-next-line no-unused-vars
 import redisClient from '../utils/redis';
 import dbClient from '../utils/db';
 
@@ -12,7 +11,6 @@ class AppController {
   }
 
   static async getStats(req, res) {
-    // Count the number of users and files in the database
     const usersCount = await dbClient.nbUsers();
     const filesCount = await dbClient.nbFiles();
 
