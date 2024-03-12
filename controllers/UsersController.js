@@ -1,5 +1,4 @@
 // eslint-disable-next-line no-unused-vars
-// UsersController.js
 // controllers/UsersController.js
 
 import sha1 from 'sha1';
@@ -17,14 +16,14 @@ class UsersController {
       return res.status(400).json({ error: 'Missing password' });
     }
 
-    const existingUser = await dbClient.db.collection('users').findOne({ email });
+    const existingUser = await dbClient.client.db().collection('users').findOne({ email });
     if (existingUser) {
       return res.status(400).json({ error: 'Already exist' });
     }
 
     const hashedPassword = sha1(password);
 
-    const result = await dbClient.db.collection('users').insertOne({ email, password: hashedPassword });
+    const result = await dbClient.client.db().collection('users').insertOne({ email, password: hashedPassword });
 
     const newUser = {
       id: result.insertedId,

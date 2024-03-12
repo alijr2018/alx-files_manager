@@ -12,13 +12,21 @@ class DBClient {
       useUnifiedTopology: true,
     });
 
-    this.client.connect((err) => {
-      if (err) {
-        console.error(`DB Connection Error: ${err}`);
-      } else {
-        console.log('DB Connected');
-      }
+    this.connectPromise = new Promise((resolve, reject) => {
+      this.client.connect((err) => {
+        if (err) {
+          console.error(`DB Connection Error: ${err}`);
+          reject(err);
+        } else {
+          console.log('DB Connected');
+          resolve();
+        }
+      });
     });
+  }
+
+  async connect() {
+    await this.connectPromise;
   }
 
   isAlive() {
@@ -26,12 +34,14 @@ class DBClient {
   }
 
   async nbUsers() {
+    await this.connect();
     const usersCollection = this.client.db(this.database).collection('users');
     const userCount = await usersCollection.countDocuments();
     return userCount;
   }
 
   async nbFiles() {
+    await this.connect();
     const filesCollection = this.client.db(this.database).collection('files');
     const filesCount = await filesCollection.countDocuments();
     return filesCount;
