@@ -1,16 +1,10 @@
+// eslint-disable-next-line no-unused-vars
 // worker.js
 
-import { Worker, Queue, WorkerOptions } from 'bull';
+import { Worker } from 'bull';
 import imageThumbnail from 'image-thumbnail';
+import fs from 'fs';
 import dbClient from './utils/db';
-
-const fileQueue = new Queue('fileQueue');
-const workerOptions: WorkerOptions = {
-  limiter: {
-    max: 100,
-    duration: 5000,
-  },
-};
 
 const worker = new Worker('fileQueue', async (job) => {
   const { userId, fileId } = job.data;
@@ -40,6 +34,6 @@ const worker = new Worker('fileQueue', async (job) => {
   });
 
   await Promise.all(promises);
-}, workerOptions);
+});
 
 export default worker;
