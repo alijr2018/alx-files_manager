@@ -11,7 +11,12 @@ const router = Router();
 router.get('/status', AppController.getStatus);
 router.get('/stats', AppController.getStats);
 
-router.post('/users', UsersController.postNew);
+router.post('/users', (req, res) => {
+  UsersController.postNew(req, res);
+});
+router.get('/users/me', (req, res) => {
+  UsersController.getMe(req, res);
+});
 
 // router.get('/connect', AuthController.getConnect);
 // router.get('/disconnect', AuthController.getDisconnect);
