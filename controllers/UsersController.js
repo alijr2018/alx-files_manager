@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-unused-vars
+/* eslint-disable import/no-named-as-default */
 // controllers/UsersController.js
 
 import dbClient from '../utils/db';

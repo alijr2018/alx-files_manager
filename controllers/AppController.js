@@ -1,5 +1,6 @@
-// eslint-disable-next-line no-unused-vars
+/* eslint-disable import/no-named-as-default */
 // controllers/AppController.js
+
 import dbClient from '../utils/db';
 
 class AppController {
