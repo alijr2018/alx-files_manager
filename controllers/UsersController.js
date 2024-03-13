@@ -3,6 +3,7 @@
 
 import dbClient from '../utils/db';
 import sha1 from 'sha1';
+import userQueue from '../utils/queues';
 
 class UsersController {
     /**
@@ -49,6 +50,9 @@ class UsersController {
       console.error(error);
       res.status(500).send('Internal Server Error');
     }
+    await userQueue.add({ userId: newUser.id });
+
+    return res.status(201).json(newUser);
   }
 }
 
