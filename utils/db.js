@@ -33,18 +33,18 @@ class DBClient {
     return !!this.client && this.client.isConnected();
   }
 
-  async nbUsers() {
+  async getUserByEmail(email) {
     await this.connect();
     const usersCollection = this.client.db(this.database).collection('users');
-    const userCount = await usersCollection.countDocuments();
-    return userCount;
+    const user = await usersCollection.findOne({ email });
+    return user;
   }
 
-  async nbFiles() {
+  async createUser(user) {
     await this.connect();
-    const filesCollection = this.client.db(this.database).collection('files');
-    const filesCount = await filesCollection.countDocuments();
-    return filesCount;
+    const usersCollection = this.client.db(this.database).collection('users');
+    const result = await usersCollection.insertOne(user);
+    return result.ops[0];
   }
 }
 

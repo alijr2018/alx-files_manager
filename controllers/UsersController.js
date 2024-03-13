@@ -1,12 +1,11 @@
 // eslint-disable-next-line no-unused-vars
 // controllers/UsersController.js
 
-import sha1 from 'sha1';
 import dbClient from '../utils/db';
-import redisClient from '../utils/redis';
+import sha1 from 'sha1';
 
 class UsersController {
-  /**
+    /**
    *
    * To create a user, you must specify an email and a password
    * If the email is missing, return an error Missing email with a status code 400
@@ -30,40 +29,26 @@ class UsersController {
       return res.status(400).json({ error: 'Missing password' });
     }
 
-    const existingUser = await dbClient.client.db().collection('users').findOne({ email });
+    const existingUser = await dbClient.getUserByEmail(email);
     if (existingUser) {
       return res.status(400).json({ error: 'Already exist' });
     }
 
     const hashedPassword = sha1(password);
 
-    const result = await dbClient.client.db().collection('users').insertOne({ email, password: hashedPassword });
-
     const newUser = {
-      id: result.insertedId,
       email,
+      password: hashedPassword,
     };
 
-    return res.status(201).json(newUser);
-  }
+    try {
+      const insertedUser = await dbClient.createUser(newUser);
 
-  static async getMe(req, res) {
-    const token = req.headers['x-token'];
-    if (!token) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      res.status(201).json({ id: insertedUser._id, email: insertedUser.email });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
     }
-
-    const userId = await redisClient.get(`auth_${token}`);
-    if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    const user = await dbClient.db.collection('users').findOne({ _id: userId });
-    if (!user) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    return res.json({ id: user._id, email: user.email });
   }
 }
 
